@@ -1,8 +1,8 @@
-import random 
+import random
 
-from ..rob_wrapper import *
+from env.rob_wrapper import *
 from toffee import Executor
-import toffee 
+import toffee
 
 class GenBase():
     def __init__(self,env):
@@ -18,11 +18,11 @@ class GenBase():
         #self.snapshot =  deque(maxlen=4)
         self.enq_exception_list = [0,1,2,12,20,22]
         self.inst_list = []
-        
+
 
     @property
     def rob_idx(self):
-        return self._rob_idx 
+        return self._rob_idx
 
     @property
     def enq_ptr(self):
@@ -33,7 +33,7 @@ class GenBase():
 
     @enq_ptr.setter
     def enq_ptr(self, new_value):
-        
+
         self._enq_ptr = self._update_value(new_value,"enq_ptr_flag")
     @deq_ptr.setter
     def deq_ptr(self, new_value):
@@ -56,7 +56,7 @@ class GenBase():
 
     def add_robidx(self):
         self.rob_idx = self._rob_idx + 1
-        
+
     def add_enqptr(self,numWB = -1):
         self.can_wb[self.enq_ptr] = numWB
         self.enq_ptr = self._enq_ptr + 1
@@ -88,7 +88,7 @@ class GenBase():
 
         return inst_list
 
-    def gen_inst(self,itype = "",invalid = "",exception = -1):      
+    def gen_inst(self,itype = "",invalid = "",exception = -1):
         inst_list = []
         if(itype == ""):
             #isfu = random.choices([0,1], [0.9,0.1])[0]
@@ -102,7 +102,7 @@ class GenBase():
                 inst.robIdx_value = self.rob_idx
                 #gen_snapshot(inst)
                 inst_list.append(inst)
-      
+
         elif(itype == "ldu" or itype == "stu" or itype == "move"):
             instr.enq_instr(itype)
             self.add_robidx
@@ -113,7 +113,7 @@ class GenBase():
             instr.valid = 0
             instr.robIdx_value = self.rob_idx
             self.inst_list.append(instr)
-            
+
         if inst_list:
             return inst_list
 
@@ -121,23 +121,23 @@ class GenBase():
         instr.robIdx_value = self.rob_idx
         await env.enq_agent.enqueue_instr(0,instr)
         self.rob_idx  += 1
-    
+
     # 随机入队size条指令
     async def random_enq_inst(self, size):
-        
+
         send_list = []
         for i in range(size):
             inst = self.gen_inst()[0]
-           
+
             send_list.append(inst)
             self.add_robidx()
-        
+
         sub_lists = [send_list[i:i+6] for i in range(0, len(send_list), 6)]
         for sub_list in sub_lists:
             await self.env.enq_agent.enq_list(sub_list)
 
         #self.inst_list = []
-    
+
     async def enq_inst(self, inst_list):
         # 根据指令流入对指令
         send_list
@@ -162,12 +162,12 @@ class GenBase():
                 #print("this is enq",item.robIdx_value,item.exception)
                 if item.valid == 1 and item.firstUop == 1:
                     self.add_enqptr(item.numWB)
-        
+
         for i in range(0,len(self.inst_list),6):
             sub_list = self.inst_list[i:i+6]
             await send_enq(sub_list)
-        self.inst_list = []    
-                    
+        self.inst_list = []
+
 
 
     def gen_writeback_info(self,env,rob_idx,nums = -1,hasexception = 0):
@@ -199,17 +199,17 @@ class GenBase():
                 for item in wb_list:
                     writeback = self.gen_writeback_info(item,nums,0)
                     writeback_list.append(writeback)
-                    self.add_deqptr()  
+                    self.add_deqptr()
             else:
                 writeback_list = wb_list
                 for _ in range(len(writeback_list)):
                     self.add_deqptr()
-                
+
         await self.env.wb_agent.writeback_list(writeback_list)
         #await self.env.enq_agent.bundle.step(1)
-        
+
         writeback_list = []
-        
+
     # async def gen_enq_inst_list(self,entry_size,snapshot = 0,exception = 0,type = 0):
     #     origin_num = snapshot
 
@@ -219,21 +219,21 @@ class GenBase():
     #     exception_list = []
     #     if exception != 0:
     #         exception_list = random.sample(range(self.enq_ptr + 1, self.enq_ptr + entry_size), exception)
-        
+
     #     async def send_enq(size,snapshot):
     #         count = 0
     #         inst_list = []
-    #         for _ in range(size):        
+    #         for _ in range(size):
     #             if self.rob_idx in exception_list:
     #                 self.gen_instr("","",random.choice(self.enq_exception_list))
     #             else:
     #                 self.gen_instr()
-                
+
     #         # if len(self.inst_list) != 0:
     #         #     await self.enq_inst_list(self.inst_list)
 
     #     await send_enq(entry_size,0)
-        
+
     #     inst_list = self.inst_list
     #     self.inst_list = []
     #     return inst_list
@@ -292,7 +292,7 @@ class GenBase():
     #     await self.env.enq_agent.bundle.step(1)
 
     #     send_list = []
-        
+
 #     async def gen_enq_inst_list(self,entry_num,snapshot = 0):
 #         origin_num = snapshot
 #         snapshot_list = []
@@ -308,7 +308,7 @@ class GenBase():
 #                     if i + enq_num >= snapshot_list[origin_num - snapshot]:
 #                         await self.gen_snapshot()
 #                         i += 1
-#                         snapshot -= 1 
+#                         snapshot -= 1
 #                         continue
 #                 for j in range(6):
 #                     if (i <= count -1):
@@ -327,7 +327,7 @@ class GenBase():
 
 #         if(entry_num <= 150):
 #             await send_enq(entry_num,snapshot,snapshot_list)
-            
+
 #         else:
 #             await send_enq(150,snapshot,snapshot_list)
 #             inst_list = []
@@ -336,7 +336,7 @@ class GenBase():
 #                 inst.robIdx_value = i+150
 #                 inst.enq_instr(2)
 #                 inst_list.append(inst)
-#             await self.enq_inst_list(inst_list)  
+#             await self.enq_inst_list(inst_list)
 #         return snapshot_list
 
 #     async def gen_enq_with_wait(self,entry_num,snapshot = 0):
@@ -362,15 +362,15 @@ class GenBase():
 #                         while(1):
 #                             await self.wait_cycle(5)
 #                             deq_ptr = self.env.internal.bundle.deq_ptr.value.value
-#                             i += 1   
+#                             i += 1
 #                             if (abs(self.enq_ptr - deq_ptr) +enq_num <= 156 or i > 100):
-#                                 break           
-                        
+#                                 break
+
 #                 if len(inst_list) != 0:
 #                     await self.enq_inst_list(inst_list)
 
 #         await send_enq()
-        
+
 #     async def gen_snapshot(self):
 #         instr = Rob_Instr()
 #         instr.enq_instr(2)
@@ -378,14 +378,14 @@ class GenBase():
 #         enq_list = []
 #         enq_list.append(instr)
 #         await self.enq_inst_list(enq_list)
-# #==================================== wb_list ===================================================== 
+# #==================================== wb_list =====================================================
 
 
-    
+
 #     async def random_writeback(self,end_ptr,wb_nums = -1):
 #         i = 0
 #         wb_list = []
-        
+
 #         while(self.env.internal.bundle.deq_ptr.value.value < end_ptr):
 #             if(i > 100):
 #                 break
@@ -394,12 +394,12 @@ class GenBase():
 #             for item in wb_list:
 #                 if getattr(self.env.internal.bundle.entry,f"index{item}").uopNum.value == 0:
 #                     self.can_wb[item] = False
-            
+
 #             start_ptr = self.env.internal.bundle.deq_ptr.value.value
 #             available_indices = [i for i in range(len(self.can_wb)) if self.can_wb[i]]
 
 #             wb_count =random.randint(1,10)
-            
+
 #             available_indices = [i for i in available_indices if 0 <= i <= end_ptr]
 #             if len(available_indices) <= wb_count:
 #                 wb_list = available_indices
@@ -429,7 +429,7 @@ class GenBase():
 #             for item in wb_list:
 #                 if getattr(self.env.internal.bundle.entry,f"index{item}").uopNum.value == 0:
 #                     self.can_wb[item] = False
-            
+
 #             start_ptr = self.env.internal.bundle.deq_ptr.value.value
 #             available_indices = [i for i in range(len(self.can_wb)) if self.can_wb[i]]
 #             wb_count =random.randint(1,10)
@@ -442,7 +442,7 @@ class GenBase():
 #                 wb_list = random.sample(available_indices,wb_count)
 #             if wb_list:
 #                 await self.wb_list(wb_list,2,wb_nums)
-        
+
 
 # #======================================= redirect ====================================================
 #     async def redirect(self,cycle = 0,rtype=0, rob_idx = 0,useSnpt=0):
@@ -450,7 +450,7 @@ class GenBase():
 #         if rob_idx == 0:
 #             rob_idx = random.randint(0,self.env.internal.bundle.enq_ptr.value.value)
 #         await self.env.enq_agent.rob_redirect(1,1,rob_idx,rtype,useSnpt)
-        
+
 #         await self.wait_cycle(1)
 
 #         async with Executor() as exec:

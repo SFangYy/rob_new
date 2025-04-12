@@ -1,8 +1,7 @@
-import random 
+import random
 
-from ..rob_wrapper import *
-from toffee import Executor
-import toffee 
+from env.rob_wrapper import *
+from toffee import *
 from .gen_base import GenBase
 
 class GenEnq():
@@ -31,7 +30,7 @@ class GenEnq():
 
 
     async def gen_rob_not_enough(self):
-        
+
         await self.gen.wb_inst([1,2,3],2,0)
         await self.gen.random_enq_inst(156)
         enq_num = random.randint(1,10)

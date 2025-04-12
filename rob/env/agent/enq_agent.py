@@ -1,11 +1,11 @@
 from toffee.agent import Agent
-from ..bundle.rob_bundle import EnqTagSuffix #,RobBundle
+from ..bundle import EnqTagSuffix #,RobBundle
 #from env.rob_wrapper import *
 class EnqAgent(Agent):
     def __init__(self, bundle):
         super().__init__(bundle)
         self.bundle = bundle
-        
+
 
 
     # #@driver_method()
@@ -15,8 +15,8 @@ class EnqAgent(Agent):
     #     self.bundle.set_all(0)
     #     self.bundle.control.reset.value = 0
     #     await self.bundle.step(1)
-        
- 
+
+
     """ new enq port
     input          io_enq_req_0_valid,
     input  [31:0]  io_enq_req_0_bits_instr,
@@ -96,7 +96,7 @@ class EnqAgent(Agent):
                 return None
         result = select_req(req_idx)
         if instr.exception != 0:
-            exception = getattr(result,f"exceptionVec_{instr.exception}") 
+            exception = getattr(result,f"exceptionVec_{instr.exception}")
             exception.value = 1
         result.valid.value = instr.valid
         #result.bits_instr.value = instr.instr
@@ -135,9 +135,9 @@ class EnqAgent(Agent):
         result.bits_isMove.value = instr.isMove
         result.bits_isVset.value = instr.isVset
         result.bits_numWB.value = instr.numWB
-        result.bits_commitType.value = instr.commitType 
-        result.bits_pdest.value = instr.pdest 
-        result.bits_instrSize.value = instr.instrSize 
+        result.bits_commitType.value = instr.commitType
+        result.bits_pdest.value = instr.pdest
+        result.bits_instrSize.value = instr.instrSize
         result.bits_dirtyVs.value = instr.dirtyVs
         result.bits_dirtyFs.value = instr.dirtyFs
         #result.bits_eliminatedMove.value = instr.eliminatedMove
@@ -149,7 +149,7 @@ class EnqAgent(Agent):
         result.bits_pdest.value = instr.pdest
         if(req_idx == 0 and instr.snapshot == 1):
             result.bits_snapshot.value = 1
-            
+
         elif req_idx == 0 and instr.snapshot == 0:
             result.bits_snapshot.value = 0
 
@@ -157,14 +157,14 @@ class EnqAgent(Agent):
             result.bits_flushPipe.value = 1
             result.valid.value = 0
 
-    
+
     # @driver_method()
     async def enq_list(self,instr_list):
         idx_1 = 0
         for instr in instr_list:
             await self.enqueue_instr(idx_1,instr)
             idx_1 = idx_1+1
-        
+
         #await self.bundle.step(1)
 
 
@@ -183,16 +183,16 @@ class EnqAgent(Agent):
         self.bundle.redirect.valid.value = valid
         self.bundle.redirect.bits_robIdx_flag.value = 0
         self.bundle.redirect.bits_robIdx_value.value = idx_value
-        self.bundle.redirect.bits_level.value = level  
-        self.bundle.snpt.useSnpt.value = useSnpt  
+        self.bundle.redirect.bits_level.value = level
+        self.bundle.snpt.useSnpt.value = useSnpt
 
     # async def enq_debug(self,channel,debug_info):
     #     self.bundle.debugEnqLsq.canAccept.value = 1
     #     getattr(self.bundle.debugEnqLsq,f"needAlloc_{channel}").value = 1
     #     getattr(self.bundle.debugEnqLsq, f"req_{channel}_bits_robIdx_value").value = debug_info.robIdx
-        
+
     #     getattr(self.bundle.debugEnqLsq, f"req_{channel}_valid").value = debug_info.valid
-        
+
     #     getattr(self.bundle.debugEnqLsq, f"req_{channel}_bits_lqIdx_value").value = debug_info.lqIdx
     #     await self.bundle.step(1)
 
@@ -205,5 +205,5 @@ class EnqAgent(Agent):
     #     getattr(self.bundle.lsTopDownInfo,f"{channel}_s2_robIdx").value = robIdx
     #     getattr(self.bundle.lsTopDownInfo,f"{channel}_s2_paddr_valid").value = 1
     #     getattr(self.bundle.lsTopDownInfo,f"{channel}_s2_paddr_bits").value = robIdx
-    #     await self.bundle.step(1)     
+    #     await self.bundle.step(1)
 

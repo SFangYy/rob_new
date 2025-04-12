@@ -1,0 +1,2 @@
+run:
+	pytest -sv .
