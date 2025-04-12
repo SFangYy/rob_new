@@ -49,14 +49,12 @@ class GenBase():
         if new_value == 160:
 
             if type != "":
-                print("11111111111111111111")
                 setattr(self,type,1 if getattr(self,type) == 0 else 0)
                 print(self.enq_ptr_flag)
             return 0
         return new_value
 
     def add_robidx(self):
-        
         self.rob_idx = self._rob_idx + 1
         
     def add_enqptr(self,numWB = -1):
@@ -93,38 +91,29 @@ class GenBase():
 
         return inst_list
 
-    def gen_instr(self,itype = "",invalid = "",exception = -1):
-        def gen_snapshot(instr):
-            if (not self.snapshot or self.rob_idx - self.snapshot[-1] > 32) and len(self.inst_list) % 6 == 5:
-                self.snapshot.append(self.rob_idx)
-                instr.snapshot = 1        
+    def gen_inst(self,itype = "",invalid = "",exception = -1):      
         inst_list = []
         if(itype == ""):
-            isfu = random.choices([0,1], [0.9,0.1])[0]
+            #isfu = random.choices([0,1], [0.9,0.1])[0]
+            isfu = 0
             if isfu:
                 fu_size = random.randint(2,16)
                 inst_list = self.gen_fu(fu_size,exception)
-                self.add_robidx()
             else:
                 inst = Rob_Instr()
-                inst.enq_instr(0,"",exception)
+                inst.enq_instr("",exception)
                 inst.robIdx_value = self.rob_idx
                 gen_snapshot(inst)
-                self.inst_list.append(inst)
-                self.add_robidx()
-                self.add_enqptr(inst.numWB)
       
         elif(itype == "ldu" or itype == "stu" or itype == "move"):
-            instr.enq_instr(0,itype)
+            instr.enq_instr(itype)
             self.add_robidx
 
         elif(invalid == "invalid"):
-
             instr = Rob_Instr()
-            instr.enq_instr(0,"",exception)
+            instr.enq_instr("",exception)
             instr.valid = 0
             instr.robIdx_value = self.rob_idx
-            gen_snapshot(instr)
             self.inst_list.append(instr)
             
         if inst_list:
@@ -135,45 +124,15 @@ class GenBase():
         await env.enq_agent.enqueue_instr(0,instr)
         self.rob_idx  += 1
 
-    async def enq_inst_list(self, inst_list):
-        """
-        inst_list: "ldu" ; 3 ; [inst0,inst1,inst2]
-        """
-        # for item in self.inst_list:
-        #     print("this is enq",item.robIdx_value)
+    async def random_enq_inst(self, size):
+        
+        # 随机入队size条指令
         send_list = []
-        if type (inst_list) == type(""):
-            inst = Rob_Instr()
-            inst.enq_instr(2,inst_list)
-            inst.robIdx_value = self.rob_idx
-            self.add_robidx()
-            send_list.append(inst)
-        elif type (inst_list) == type(0):
-            for i in range(inst_list):
-                inst = Rob_Instr()
-                inst.numWB = 2
-                inst.enq_instr(2)
+        for i in range(count):
+                inst = self.gen_inst()
                 inst.robIdx_value = self.rob_idx
                 send_list.append(inst)
                 self.add_robidx()
-        elif type(inst_list[0]) == type(""):
-            for item in inst_list:
-                inst = Rob_Instr()
-                if(item == ""):
-                    inst.enq_instr(2)
-                else:
-                    inst.enq_instr(2,item)
-                inst.numWB = 2
-                send_list.append(inst)
-                inst.robIdx_value = self.rob_idx
-                self.add_robidx(item.numWB)
-        else:
-            for item in self.inst_list:
-                #print("this is enq",item.robIdx_value,item.exception)
-                if item.valid == 1 and item.firstUop == 1:
-                    self.add_enqptr(item.numWB)
-                    
-                    
 
         async def send_enq(send_list):
             # async with Executor(exit = "none") as exec:
@@ -185,6 +144,39 @@ class GenBase():
             sub_list = self.inst_list[i:i+6]
             await send_enq(sub_list)
         self.inst_list = []
+    
+    async def enq_inst(self, inst_list):
+        # 根据指令流入对指令
+        send_list
+        if type (inst_list) == type(""):
+            inst = Rob_Instr()
+            inst.enq_inst()
+            inst.robIdx_value = self.rob_idx
+            send_list.append(inst)
+            self.add_robidx()
+        elif type(inst_list[0]) == type(""):
+            for item in inst_list:
+                inst = Rob_Instr()
+                if(item == ""):
+                    inst.enq_inst()
+                else:
+                    inst.enq_inst(item)
+                send_list.append(inst)
+                inst.robIdx_value = self.rob_idx
+                self.add_robidx(item.numWB)
+        else:
+            for item in self.inst_list:
+                #print("this is enq",item.robIdx_value,item.exception)
+                if item.valid == 1 and item.firstUop == 1:
+                    self.add_enqptr(item.numWB)
+        
+        for i in range(0,len(self.inst_list),6):
+            sub_list = self.inst_list[i:i+6]
+            await send_enq(sub_list)
+        self.inst_list = []    
+                    
+
+
         
     async def gen_enq_inst_list(self,entry_size,snapshot = 0,exception = 0,type = 0):
         origin_num = snapshot
@@ -356,43 +348,43 @@ class GenBase():
 #         await self.enq_inst_list(enq_list)
 # #==================================== wb_list ===================================================== 
 
-#     def gen_single_writeback(self,env,rob_idx,nums = -1,hasexception = 0):
-#         """
-#         rob_idx
-#         writeback nums
-#         has_exception
-#         """
-#         futype = getattr(self.env.internal.bundle.entry,f"index{rob_idx}").debug_fuType
-#         real_nums = getattr(self.env.internal.bundle.entry,f"index{rob_idx}").uopNum.value
+    def gen_writeback_info(self,env,rob_idx,nums = -1,hasexception = 0):
+        """
+        rob_idx
+        writeback nums
+        has_exception
+        """
+        futype = getattr(self.env.internal.bundle.entry,f"index{rob_idx}").debug_fuType
+        real_nums = getattr(self.env.internal.bundle.entry,f"index{rob_idx}").uopNum.value
 
-#         if nums == -1 or real_nums == 0 or (real_nums - nums < 0):
-#             nums = real_nums
-#         writeback = Rob_Writeback()
-#         writeback.writeback_instr(0,rob_idx,futype.value,nums,hasexception,0)
-#         return writeback
+        if nums == -1 or real_nums == 0 or (real_nums - nums < 0):
+            nums = real_nums
+        writeback = Rob_Writeback()
+        writeback.writeback_instr(0,rob_idx,futype.value,nums,hasexception,0)
+        return writeback
 
-#     async def wb_list(self,wb_list,wait = 0,nums = 0):
-#         writeback_list = []
-#         await self.env.wb_agent.bundle.step(wait)
-#         if type(wb_list) == type(0):
-#             for i in range(wb_list):
-#                 writeback = self.gen_single_writeback(self.env,i,nums,0)
-#                 writeback_list.append(writeback)
-#         else:
-#             if type(wb_list[0]) == type(0):
-#                 for item in wb_list:
-#                     writeback = self.gen_single_writeback(self.env,item,nums,0)
-#                     writeback_list.append(writeback)
-#                     self.add_deqptr()  
-#             else:
-#                 writeback_list = wb_list
-#                 for _ in range(len(writeback_list)):
-#                     self.add_deqptr()
+    async def wb_list(self,wb_list,wait = 0,nums = 0):
+        writeback_list = []
+        await self.env.wb_agent.bundle.step(wait)
+        if type(wb_list) == type(0):
+            for i in range(wb_list):
+                writeback = self.gen_writeback_info(self.env,i,nums,0)
+                writeback_list.append(writeback)
+        else:
+            if type(wb_list[0]) == type(0):
+                for item in wb_list:
+                    writeback = self.gen_writeback_info(self.env,item,nums,0)
+                    writeback_list.append(writeback)
+                    self.add_deqptr()  
+            else:
+                writeback_list = wb_list
+                for _ in range(len(writeback_list)):
+                    self.add_deqptr()
                 
-#         await self.env.wb_agent.exec_writeback_list(writeback_list)
-#         await self.env.enq_agent.bundle.step(1)
+        await self.env.wb_agent.exec_writeback_list(writeback_list)
+        await self.env.enq_agent.bundle.step(1)
         
-#         writeback_list = []
+        writeback_list = []
     
 #     async def random_writeback(self,end_ptr,wb_nums = -1):
 #         i = 0

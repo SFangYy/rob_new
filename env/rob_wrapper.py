@@ -80,7 +80,7 @@ class Rob_Instr:
             self.vpu_vsew = 1
             self.vpu_vta = 1
 
-    def enq_instr(self,inst_type = None):
+    def enq_inst(self,inst_type = None):
         self.randmoize()
         self.valid = 1
         self.firstUop = 1
@@ -89,9 +89,8 @@ class Rob_Instr:
         self.instrSize = 2
         self.blockBackward = 0
         if inst_type == None:
-            inst_type = random.choice(self.inst_list[0:17])
-        elif inst_type == "vinst":
-            inst_type = random.choice(self.inst_list[18:34])
+            inst_type = random.choice(self.inst_list[0:34])
+
         self.gen_inst_type(inst_type)
 
         
