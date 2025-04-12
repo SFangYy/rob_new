@@ -164,6 +164,6 @@ def gen_bundle_code_from_dict(bundle_name: str, dut, dict: dict, max_width: int 
 from picker_out_rob import DUTRob
 
 
-print(gen_bundle_code_from_prefix("ExceptionVecBundle", DUTRob(), "io_exception_bits_exceptionVec_"))
+print(gen_bundle_code_from_prefix("WriteBackNumsBundle", DUTRob(), "io_writebackNums_25_"))
 
 

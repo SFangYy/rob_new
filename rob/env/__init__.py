@@ -1,6 +1,6 @@
 import toffee
 from .agent import *
-from .bundle import *
+from .rob_bundle import *
 from .rob_wrapper import *
 from .refmodel import *
 

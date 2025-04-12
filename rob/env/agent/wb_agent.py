@@ -40,7 +40,7 @@ class WritebackAgent(Agent):
     async def writeback(self,channel,writeback_instr):
 
         if channel != None:
-            result = getattr(self.bundle,"io_writeback_" + str(channel))
+            result = self.bundle.writeback[channel]
             if (19 <= channel and channel <=25):
                 result.valid.value = writeback_instr.valid
             result.bits_robIdx_value.value = writeback_instr.robIdx_value
@@ -49,7 +49,7 @@ class WritebackAgent(Agent):
                     exception_channel = getattr(result,f"bits_exceptionVec_{writeback_instr.exception}")
                     exception_channel.value = 1
             if(0 <= channel and channel <=25):
-                result_num = getattr(self.bundle,"io_writebackNums_" + str(channel))
+                result_num = self.bundle.writeback_nums[channel]
                 result_num.bits.value = writeback_instr.nums
 
             if(channel<=25 and channel >=14):
@@ -69,11 +69,11 @@ class WritebackAgent(Agent):
 
     async def reset_writeback(self,channel,writeback_instr):
         if channel != None:
-            result = getattr(self.bundle,"io_writeback_" + str(channel))
+            result = self.bundle.writeback[channel]
             result.bits_robIdx_value.value = 0
             result.valid.value = 0
             if(0 <= channel and channel <=25):
-                result_num = getattr(self.bundle,"io_writebackNums_" + str(channel))
+                result_num = self.bundle.writeback_nums[channel]
                 result_num.bits.value = 0
             if channel in [5,14,15,19,20,21,22,23,24,25]:
                 if(writeback_instr.exception != -1):
