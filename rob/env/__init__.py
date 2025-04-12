@@ -2,6 +2,7 @@ import toffee
 from .agent import *
 from .bundle import *
 from .rob_wrapper import *
+from .refmodel import *
 
 class RobEnv(toffee.Env):
     def __init__(self, dut):

@@ -1,13 +1,13 @@
 
 from ..rob_wrapper import *
 from queue import Queue
-from toffee.agent import Agent
+from toffee import *
 class WritebackAgent(Agent):
     def __init__(self,bundle):
         super().__init__(bundle.step)
         self.bundle = bundle
         self.line = 0
-        
+
     def commit_assert(self,line):
         def deqgroup_assert():
             if getattr(self.bundle.entry,f"index{0}").ftqIdx_value.value == self.bundle.deqgroup.ftqIdx_value.value:
@@ -23,7 +23,7 @@ class WritebackAgent(Agent):
                     return False
                 #print(getattr(self.bundle.entry,f"index{0}").ftqIdx_value.value,self.bundle.deqgroup.ftqIdx_value.value)
                 self.line = self.bundle.line.robIdxThisLine_0.value
-                
+
             return True
         else:
             return False
@@ -36,7 +36,7 @@ class WritebackAgent(Agent):
         self.bundle.redirect.bits_robIdx_value.value = robIdx_value
         self.bundle.redirect.bits_level.value = level
 
-    #@driver_method()
+    @driver_method()
     async def writeback(self,channel,writeback_instr):
 
         if channel != None:
@@ -51,7 +51,7 @@ class WritebackAgent(Agent):
             if(0 <= channel and channel <=25):
                 result_num = getattr(self.bundle,"io_writebackNums_" + str(channel))
                 result_num.bits.value = writeback_instr.nums
-                
+
             if(channel<=25 and channel >=14):
                 #result.bits_data_0.value = writeback_instr.data
                 result.bits_robIdx_flag.value = writeback_instr.robIdx_flag
@@ -95,4 +95,3 @@ class WritebackAgent(Agent):
         self.bundle.commits.isWalk = iswalk
         self.bundle.commits.isCommit = isCommit
 
-   

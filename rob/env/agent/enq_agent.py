@@ -1,4 +1,4 @@
-from toffee.agent import Agent
+from toffee import *
 from ..bundle import EnqTagSuffix #,RobBundle
 #from env.rob_wrapper import *
 class EnqAgent(Agent):
@@ -158,7 +158,7 @@ class EnqAgent(Agent):
             result.valid.value = 0
 
 
-    # @driver_method()
+    @driver_method()
     async def enq_list(self,instr_list):
         idx_1 = 0
         for instr in instr_list:
@@ -178,7 +178,7 @@ class EnqAgent(Agent):
         #return self.bundle.enq_ptr.ptrVec.value.value
         #print("dut is ",self.bundle.enq_ptr.ptrVec.value.value)
 
-    # @driver_method()
+    @driver_method()
     async def rob_redirect(self,valid,idx_flag,idx_value,level,useSnpt=0):
         self.bundle.redirect.valid.value = valid
         self.bundle.redirect.bits_robIdx_flag.value = 0
