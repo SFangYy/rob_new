@@ -11,7 +11,7 @@ class GenEnq():
         #self.env = env
 
 
-    async def gen_invalid_instr(self,invalid="",exception = ""):
+    async def gen_invalid(self,type = ""):
         invalid_type = ["not_first","invalid"]
 
         enq_inst_size = random.randint(1,159)
@@ -22,18 +22,53 @@ class GenEnq():
 
         for i in range(invalid_size):
             inst = self.gen.gen_inst("",random.choice(invalid_type))
-            inst_list.append(instr)
+            inst_list.append(inst)
             await self.gen.enq_inst_list(inst_list)
-            await self.gen.enq_inst_list(i)
             await self.gen.wait_cycle(1)
             #assert(i+j+invalid_num == self.env.internal.bundle.enq_ptr.value.value)
 
 
     async def gen_rob_not_enough(self):
 
-        await self.gen.wb_inst([1,2,3],2,0)
+        #await self.gen.wb_inst([1,2,3],2,0)
         await self.gen.random_enq_inst(156)
-        enq_num = random.randint(1,10)
+        for i in range(4):
+            await self.gen.random_enq_inst(1)
+            
+        #enq_num = random.randint(1,10)
         #await self.gen.gen_enq_inst_list(enq_num)
         #await self.gen.wait_cycle(3)
-        #assert(156 == self.env.internal.bundle.enq_ptr.value.value)
+
+    async def gen_rab_not_enough(self):
+
+        #await self.gen.wb_inst([1,2,3],2,0)
+        await self.gen.random_enq_inst(156)
+        for i in range(4):
+            await self.gen.random_enq_inst(1)
+
+    async def gen_enq_inst(self):
+
+        enq_size = random.randint(1,10)
+        await self.gen.random_enq_inst(enq_size)
+        await self.gen.wb_inst(enq_size)
+
+
+    async def gen_special_inst(self):
+
+        enq_size = random.randint(1,10)
+        await self.gen.random_enq_inst(enq_size)
+        await self.gen.wb_inst(enq_size)
+
+    async def gen_enqflag_reverse(self):
+        #enq_size = random.randint(1,10)
+        await self.gen.random_enq_inst(156)
+        await self.gen.wb_inst(20)
+        await self.gen.random_enq_inst(4)
+        await self.gen.random_enq_inst(156)
+        await self.gen.random_enq_inst(4)
+
+    async def gen_rob_empty(self):
+
+        enq_size = random.randint(1,10)
+        await self.gen.random_enq_inst(enq_size)
+        await self.gen.wb_inst(enq_size)

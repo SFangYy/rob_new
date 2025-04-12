@@ -9,12 +9,12 @@ class EnqAgent(Agent):
 
 
     # #@driver_method()
-    # async def init_dut(self):
-    #     self.bundle.control.reset.value = 1
-    #     await self.bundle.step(2)
-    #     self.bundle.set_all(0)
-    #     self.bundle.control.reset.value = 0
-    #     await self.bundle.step(1)
+    async def init_dut(self):
+        self.bundle.control.reset.value = 1
+        await self.bundle.step(2)
+        self.bundle.set_all(0)
+        self.bundle.control.reset.value = 0
+        await self.bundle.step(1)
 
 
     """ new enq port

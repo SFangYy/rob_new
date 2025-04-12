@@ -66,7 +66,8 @@ class GenBase():
     async def wait_cycle(self,cycle=0):
         await self.env.enq_agent.bundle.step(cycle)
 
-
+    def init_dut(self):
+        self.env.enq_agent.init_dut()
     def gen_fu(self,size,exception = -1):
         inst_list = []
         for i in range(size):
@@ -102,7 +103,6 @@ class GenBase():
                 inst.robIdx_value = self.rob_idx
                 #gen_snapshot(inst)
                 inst_list.append(inst)
-
         elif(itype == "ldu" or itype == "stu" or itype == "move"):
             instr.enq_instr(itype)
             self.add_robidx
@@ -113,6 +113,9 @@ class GenBase():
             instr.valid = 0
             instr.robIdx_value = self.rob_idx
             self.inst_list.append(instr)
+        else:
+            instr = Rob_Instr()
+            inst.enq_inst("csr")
 
         if inst_list:
             return inst_list
@@ -138,8 +141,9 @@ class GenBase():
 
         #self.inst_list = []
 
+    # 根据指令流入对指令
     async def enq_inst(self, inst_list):
-        # 根据指令流入对指令
+        
         send_list
         if type (inst_list) == type(""):
             inst = Rob_Instr()
@@ -149,24 +153,19 @@ class GenBase():
             self.add_robidx()
         elif type(inst_list[0]) == type(""):
             for item in inst_list:
-                inst = Rob_Instr()
-                if(item == ""):
-                    inst.enq_inst()
+                if item == "invalid":
+                    inst = self.gen_inst("","invalid")[0]
                 else:
-                    inst.enq_inst(item)
+                    inst = self.gen_inst(item,"")[0]
                 send_list.append(inst)
-                inst.robIdx_value = self.rob_idx
-                self.add_robidx(item.numWB)
+
         else:
             for item in self.inst_list:
                 #print("this is enq",item.robIdx_value,item.exception)
                 if item.valid == 1 and item.firstUop == 1:
                     self.add_enqptr(item.numWB)
 
-        for i in range(0,len(self.inst_list),6):
-            sub_list = self.inst_list[i:i+6]
-            await send_enq(sub_list)
-        self.inst_list = []
+        await self.env.enq_agent.enq_list(send_list)
 
 
 
