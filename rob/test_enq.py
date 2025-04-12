@@ -67,3 +67,11 @@ async def test_rob_empty(rob_base_gen):
     gen = GenEnq(rob_base_gen)
     for i in range(200):
         await gen.gen_rob_empty()
+
+# case 31
+@toffee_test.testcase
+async def test_enq_with_exception(rob_base_gen):
+    rob_base_gen.init_dut()
+    gen = GenEnq(rob_base_gen)
+    for i in range(200):
+        await gen.gen_enq_with_exception()

@@ -48,3 +48,9 @@ class GenWb():
             enq_size = random.choice([num for num in range(1,160) if num %8 ==0 ])
         await self.gen.random_enq_inst(enq_size)
         await self.gen.wb_inst(enq_size)
+
+    async def gen_wb_with_exception(self):
+
+        enq_size = random.randint(1,10)
+        await self.gen.random_enq_inst(enq_size)
+        await self.gen.wb_inst(enq_size,1)

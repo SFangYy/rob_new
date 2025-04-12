@@ -183,6 +183,7 @@ class RobBundle(Bundle):
             setattr(self,name,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
         for name in [*[f"io_writebackNums_{i}" for i in range(26)]]:
            setattr(self,name,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
+        self.snpt = Bundle.new_class_from_xport(dut.io_snpt).from_prefix("io_snpt_")
         #self.enq_ptr = Bundle.new_class_from_xport(dut.Rob_enqPtrGenModule_enqPtrVec_0).from_prefix("Rob_enqPtrGenModule_enqPtrVec_0_")
         #self.line = Bundle.new_class_from_xport(dut.bosc_Rob).from_prefix("bosc_Rob_")
         # self.exception = ExceptionBundle(dut)
@@ -192,7 +193,7 @@ class RobBundle(Bundle):
         # self.writebackNums = Bundle.new_class_from_xport(dut.io_writebackNums_15).from_prefix("io_writebackNums_15_")
 
         # self.robDeqPtr = Bundle.new_class_from_xport(dut.io_robDeqPtr).from_prefix("io_robDeqPtr_")
-        # self.snpt = Bundle.new_class_from_xport(dut.io_snpt).from_prefix("io_snpt_")
+        
         
         # self.fromDecode = Bundle.new_class_from_xport(dut.io_fromDecode).from_prefix("io_fromDecode_")
         # self.singleSignals = SingleTagSuffix.from_prefix("io_")

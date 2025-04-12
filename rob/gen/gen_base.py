@@ -91,7 +91,7 @@ class GenBase():
 
         return inst_list
 
-    def gen_inst(self,itype = "",invalid = "",exception = -1):
+    def gen_inst(self,itype = "",invalid = "",exception = 0):
         inst_list = []
         if(itype == ""):
             #isfu = random.choices([0,1], [0.9,0.1])[0]
@@ -128,11 +128,15 @@ class GenBase():
         self.rob_idx  += 1
 
     # 随机入队size条指令
-    async def random_enq_inst(self, size):
+    async def random_enq_inst(self, size, hasexception = 0):
 
         send_list = []
+        exception_inst = random.randint(0,size)
         for i in range(size):
-            inst = self.gen_inst()[0]
+            if hasexception and i == exception_inst:
+                inst = self.gen_inst()[0]
+            else:
+                inst = self.gen_inst()[0]
 
             send_list.append(inst)
             self.add_robidx()
@@ -182,7 +186,7 @@ class GenBase():
         writeback.writeback_instr(0,rob_idx,fuOptype,nums,hasexception,0)
         return writeback
 
-    async def wb_inst(self,wb_list,wait = 0,nums = 0):
+    async def wb_inst(self,wb_list,wait = 0,nums = 0, hasexception  = 1):
         """writeback inst stream
         args:
             wb_list: size or inst_stream like 5 or [1,3,4]
@@ -193,7 +197,7 @@ class GenBase():
         #await self.env.wb_agent.bundle.step(wait)
         if type(wb_list) == type(0):
             for i in range(wb_list):
-                writeback = self.gen_writeback_info(i,nums,0)
+                writeback = self.gen_writeback_info(i,nums,hasexception)
                 writeback_list.append(writeback)
         else:
             if type(wb_list[0]) == type(0):
@@ -446,17 +450,17 @@ class GenBase():
 
 
 # #======================================= redirect ====================================================
-#     async def redirect(self,cycle = 0,rtype=0, rob_idx = 0,useSnpt=0):
-#         await self.wait_cycle(cycle)
-#         if rob_idx == 0:
-#             rob_idx = random.randint(0,self.env.internal.bundle.enq_ptr.value.value)
-#         await self.env.enq_agent.rob_redirect(1,1,rob_idx,rtype,useSnpt)
+    async def redirect(self,cycle = 0,rtype=0, rob_idx = 0,useSnpt=0):
+        await self.wait_cycle(cycle)
+        if rob_idx == 0:
+            rob_idx = random.randint(0,self.env.internal.bundle.enq_ptr.value.value)
+        await self.env.enq_agent.rob_redirect(1,1,rob_idx,rtype,useSnpt)
 
-#         await self.wait_cycle(1)
+        await self.wait_cycle(1)
 
-#         async with Executor() as exec:
-#             exec(self.env.enq_agent.rob_redirect(0,1,rob_idx,rtype,useSnpt))
-#             #exec(self.assert_redirect(rob_idx,rtype,0))
+        # async with Executor() as exec:
+        #     exec(self.env.enq_agent.rob_redirect(0,1,rob_idx,rtype,useSnpt))
+            #exec(self.assert_redirect(rob_idx,rtype,0))
 
 
 #     async def gen_redirect(self,env,rtype):
