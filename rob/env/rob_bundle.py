@@ -26,7 +26,7 @@ class EnqReqBundle(Bundle):
     bits_vpu_vlmul, bits_vpu_vma, bits_vpu_vsew, bits_vpu_vta, bits_waitForward, bits_wfflags, valid = Signals(63)
 
 class EnqBundle(Bundle):
-    def __init__(self,dut):
+    def __init__(self):
         super().__init__()
         self.tag = EnqTagSuffix.from_prefix("io_enq_")
         self.req = BundleList(EnqReqBundle, "io_enq_req_#_", 6)
@@ -100,17 +100,15 @@ bundle.req_0.frontendHit.value = 0
 """
 
 class RobBundle(Bundle):
-    def __init__(self, dut):
+    def __init__(self):
         super().__init__()
-
-        self.dut = dut
 
         # connect Bundle
         self.control = ControlBundle()
         self.redirect = RedirectBundle.from_prefix("io_redirect_")
 
         # enq Bundle
-        self.enq = EnqBundle(dut)
+        self.enq = EnqBundle()
 
         # writeback & writebackNums
         # writeback port:1,3,5,7,14-25

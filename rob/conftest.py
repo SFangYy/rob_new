@@ -7,9 +7,9 @@ import toffee_test
 async def rob_base_gen(toffee_request:toffee_test.ToffeeRequest):
     dut = toffee_request.create_dut(DUTRob, "clock")
     toffee.start_clock(dut)
-    env = RobEnv(dut) #.attach(RobModel())
+    rob_bundle = RobBundle().bind(dut)
+    env = RobEnv(rob_bundle) #.attach(RobModel())
     gen = GenBase(env)
-
 
     # toffee_request.add_cov_group([
     #     get_coverage_group_of_sc_predict

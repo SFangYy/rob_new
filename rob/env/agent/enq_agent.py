@@ -4,9 +4,6 @@ class EnqAgent(Agent):
         super().__init__(bundle)
         self.bundle = bundle
 
-
-
-    # #@driver_method()
     async def init_dut(self):
         self.bundle.control.reset.value = 1
         await self.bundle.step(2)
@@ -14,69 +11,6 @@ class EnqAgent(Agent):
         self.bundle.control.reset.value = 0
         await self.bundle.step(1)
 
-
-    """ new enq port
-    input          io_enq_req_0_valid,
-    input  [31:0]  io_enq_req_0_bits_instr,
-    input  [40:0]  io_enq_req_0_bits_pc,
-    input          io_enq_req_0_bits_exceptionVec_0,
-    input          io_enq_req_0_bits_exceptionVec_1,
-    input          io_enq_req_0_bits_exceptionVec_2,
-    input          io_enq_req_0_bits_exceptionVec_12,
-    input          io_enq_req_0_bits_exceptionVec_20,
-    input          io_enq_req_0_bits_exceptionVec_22,
-    input          io_enq_req_0_bits_hasException,
-    input          io_enq_req_0_bits_trigger_frontendCanFire_0,
-    input          io_enq_req_0_bits_trigger_frontendCanFire_1,
-    input          io_enq_req_0_bits_trigger_frontendCanFire_2,
-    input          io_enq_req_0_bits_trigger_frontendCanFire_3,
-    input          io_enq_req_0_bits_preDecodeInfo_isRVC,
-    input          io_enq_req_0_bits_crossPageIPFFix,
-    input          io_enq_req_0_bits_ftqPtr_flag,
-    input  [5:0]   io_enq_req_0_bits_ftqPtr_value,
-    input  [3:0]   io_enq_req_0_bits_ftqOffset,
-    input  [5:0]   io_enq_req_0_bits_ldest,
-    input  [34:0]  io_enq_req_0_bits_fuType,
-    input  [8:0]   io_enq_req_0_bits_fuOpType,
-    input          io_enq_req_0_bits_rfWen,
-    input          io_enq_req_0_bits_fpWen,
-    input          io_enq_req_0_bits_vecWen,
-    input          io_enq_req_0_bits_v0Wen,
-    input          io_enq_req_0_bits_vlWen,
-    input          io_enq_req_0_bits_isXSTrap,
-    input          io_enq_req_0_bits_waitForward,
-    input          io_enq_req_0_bits_blockBackward,
-    input          io_enq_req_0_bits_flushPipe,
-    input          io_enq_req_0_bits_vpu_vill,
-    input          io_enq_req_0_bits_vpu_vma,
-    input          io_enq_req_0_bits_vpu_vta,
-    input  [1:0]   io_enq_req_0_bits_vpu_vsew,
-    input  [2:0]   io_enq_req_0_bits_vpu_vlmul,
-    input          io_enq_req_0_bits_vpu_specVill,
-    input          io_enq_req_0_bits_vpu_specVma,
-    input          io_enq_req_0_bits_vpu_specVta,
-    input  [1:0]   io_enq_req_0_bits_vpu_specVsew,
-    input  [2:0]   io_enq_req_0_bits_vpu_specVlmul,
-    input          io_enq_req_0_bits_vlsInstr,
-    input          io_enq_req_0_bits_wfflags,
-    input          io_enq_req_0_bits_isMove,
-    input          io_enq_req_0_bits_isVset,
-    input          io_enq_req_0_bits_firstUop,
-    input          io_enq_req_0_bits_lastUop,
-    input  [6:0]   io_enq_req_0_bits_numWB,
-    input  [2:0]   io_enq_req_0_bits_commitType,
-    input  [7:0]   io_enq_req_0_bits_pdest,
-    input          io_enq_req_0_bits_robIdx_flag,
-    input  [7:0]   io_enq_req_0_bits_robIdx_value,
-    input  [2:0]   io_enq_req_0_bits_instrSize,
-    input          io_enq_req_0_bits_dirtyFs,
-    input          io_enq_req_0_bits_dirtyVs,
-    input          io_enq_req_0_bits_eliminatedMove,
-    input          io_enq_req_0_bits_snapshot,
-    input          io_enq_req_0_bits_loadWaitBit,
-    input          io_enq_req_0_bits_singleStep,
-
-    """
     async def enqueue_instr(self,req_idx,instr):
         def select_req(i):
             func_map = {
@@ -155,7 +89,6 @@ class EnqAgent(Agent):
             result.bits_flushPipe.value = 1
             result.valid.value = 0
 
-
     @driver_method()
     async def enq_list(self,instr_list):
         idx_1 = 0
@@ -166,15 +99,15 @@ class EnqAgent(Agent):
         #await self.bundle.step(1)
 
 
-    async def reset_enq(self):
-        instr = Rob_Instr()
-        instr.valid = 0
-        instr.robIdx_value = 0
-        for i in range(6):
-            await self.enqueue_instr(i,instr)
-        #await self.bundle.step(1)
-        #return self.bundle.enq_ptr.ptrVec.value.value
-        #print("dut is ",self.bundle.enq_ptr.ptrVec.value.value)
+    # async def reset_enq(self):
+    #     instr = Rob_Instr()
+    #     instr.valid = 0
+    #     instr.robIdx_value = 0
+    #     for i in range(6):
+    #         await self.enqueue_instr(i,instr)
+    #     #await self.bundle.step(1)
+    #     #return self.bundle.enq_ptr.ptrVec.value.value
+    #     #print("dut is ",self.bundle.enq_ptr.ptrVec.value.value)
 
     @driver_method()
     async def rob_redirect(self,valid,idx_flag,idx_value,level,useSnpt=0):

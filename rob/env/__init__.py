@@ -5,10 +5,8 @@ from .rob_wrapper import *
 from .refmodel import *
 
 class RobEnv(toffee.Env):
-    def __init__(self, dut):
+    def __init__(self, bundle):
         super().__init__()
 
-        self.dut = dut
-        self.bundle = RobBundle(self.dut).bind(dut)
-        self.enq_agent = EnqAgent(self.bundle)
-        self.wb_agent = WritebackAgent(self.bundle)
+        self.enq_agent = EnqAgent(bundle)
+        self.wb_agent = WritebackAgent(bundle)
