@@ -7,6 +7,8 @@ import toffee
 class GenBase():
     def __init__(self,env):
         self.env = env
+        self.enqptr = 0
+        self.deqptr = 0
         self.can_wb = [-1] *160
         self.wb_channel = [0] *28
         self._deq_ptr = 0
@@ -171,12 +173,12 @@ class GenBase():
 
     def gen_writeback_info(self,env,rob_idx,nums = -1,hasexception = 0):
         #futype = getattr(self.env.internal.bundle.entry,f"index{rob_idx}").debug_fuType
-        #real_nums = getattr(self.env.internal.bundle.entry,f"index{rob_idx}").uopNum.value
 
-        # if nums == -1 or real_nums == 0 or (real_nums - nums < 0):
-        #     nums = real_nums
         fuOptype = 16
         writeback = Rob_Writeback()
+        if nums == 0:
+            # nums = real_nums = getattr(self.env.internal.bundle.entry,f"index{rob_idx}").uopNum.value
+            nums = 2
         writeback.writeback_instr(0,rob_idx,fuOptype,nums,hasexception,0)
         return writeback
 
