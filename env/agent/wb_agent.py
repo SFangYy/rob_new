@@ -1,7 +1,7 @@
-#from .transaction import *
-from env.rob_wrapper import *
+
+from ..rob_wrapper import *
 from queue import Queue
-from mlvp.agent import *
+from toffee.agent import Agent
 class WritebackAgent(Agent):
     def __init__(self,bundle):
         super().__init__(bundle.step)
@@ -24,7 +24,6 @@ class WritebackAgent(Agent):
                 #print(getattr(self.bundle.entry,f"index{0}").ftqIdx_value.value,self.bundle.deqgroup.ftqIdx_value.value)
                 self.line = self.bundle.line.robIdxThisLine_0.value
                 
-
             return True
         else:
             return False
@@ -42,8 +41,8 @@ class WritebackAgent(Agent):
 
         if channel != None:
             result = getattr(self.bundle,"io_writeback_" + str(channel))
-
-            result.valid.value = writeback_instr.valid
+            if (19 <= channel and channel <=25):
+                result.valid.value = writeback_instr.valid
             result.bits_robIdx_value.value = writeback_instr.robIdx_value
             if channel in [5,14,15,19,20,21,22,23,24,25]:
                 if(writeback_instr.exception != -1):
@@ -53,21 +52,19 @@ class WritebackAgent(Agent):
                 result_num = getattr(self.bundle,"io_writebackNums_" + str(channel))
                 result_num.bits.value = writeback_instr.nums
                 
-            if((channel<=25 and channel >=14) or channel == 5):
-                result.bits_data_0.value = writeback_instr.data
+            if(channel<=25 and channel >=14):
+                #result.bits_data_0.value = writeback_instr.data
                 result.bits_robIdx_flag.value = writeback_instr.robIdx_flag
             if(channel<=25 and channel >=21):
                 result.bits_flushPipe.value = writeback_instr.flushPipe
 
-    @driver_method()
-    async def exec_writeback_list(self,writeback_list):
-        await self.bundle.step(5)
-        for inst in writeback_list:
-
-            await self.writeback(inst.channel,instr)
-        await self.bundle.step(1)
-        for inst in writeback_list:
-            await self.reset_writeback(inst.channel,instr)
+    #@driver_method()
+    async def writeback_list(self,writeback_list):
+        for wb_info in writeback_list:
+            await self.writeback(wb_info.channel,wb_info)
+        # await self.bundle.step(1)
+        # for inst in writeback_list:
+        #     await self.reset_writeback(inst.channel,instr)
 
 
     async def reset_writeback(self,channel,writeback_instr):

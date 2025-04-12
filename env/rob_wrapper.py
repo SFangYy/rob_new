@@ -140,11 +140,11 @@ class Rob_Writeback:
         elif fuOpType == 3:
             return 5
         elif fuOpType == 4:
-            return 8
+            return 7
         elif fuOpType == 5:
             return 7
         elif fuOpType == 6:
-            number = [0,2,4,6]
+            number = [1,3,5,7]
             return random.choice(number)
         elif fuOpType == 7:
             number = [0,2]
@@ -154,27 +154,27 @@ class Rob_Writeback:
         elif fuOpType == 9:
             return 7
         elif fuOpType == 10:
-            number = [0,2]
+            number = [1,3]
             return random.choice(number)
         elif fuOpType == 11:
-            number = [8,9,1,11]
+            number = [7,14,15,17]
             return random.choice(number)
         elif fuOpType == 12:
-            number = [8,9,1,11]
+            number = [7,14,15,17]
             return random.choice(number)
         elif fuOpType == 13:
-            return 8
+            return 7
         elif fuOpType == 14:
-            number = [12,13]
+            number = [14,15]
             return random.choice(number)
         elif fuOpType == 15:
             number = [21,22,23]
             return random.choice(number)
         elif fuOpType == 16:
-            number = [19,2,26,27]
+            number = [19,7,15,17]
             return random.choice(number)
         elif fuOpType == 17:
-            number = [19,2,26,27]
+            number = [19,3,15,17]
             return random.choice(number)
         elif fuOpType == 18:
             return 15
@@ -235,14 +235,11 @@ class Rob_Writeback:
             for i in range(24):
                 number.append(i)
             self.exception = random.choice(number)
-            print("0-23 bit exception")
         elif hasexception == 1 and (self.channel == 14 or self.channel == 15):
             self.exception_0 = 2
-            print("2 bit exception")
         elif hasexception == 1 and self.channel == 5:
             number = [2,3,8,9,10,11,22]
             self.exception = random.choice(number)
-            print("2,3,8,9,10,11,12")
        
     def set_attr(self,robIdx_value,nums,channel,exception):
         self.valid = 1

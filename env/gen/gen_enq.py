@@ -3,13 +3,13 @@ import random
 from ..rob_wrapper import *
 from toffee import Executor
 import toffee 
-from gen.gen_base import GenBase
+from .gen_base import GenBase
 
-class gen_enq():
-    def __init__(self,env = None):
+class GenEnq():
+    def __init__(self,gen = None):
         self.rob_idx = 0
-        self.gen = gen_base(env)
-        self.env = env
+        self.gen = gen
+        #self.env = env
 
 
     async def gen_invalid_instr(self,invalid="",exception = ""):
@@ -32,8 +32,9 @@ class gen_enq():
 
     async def gen_rob_not_enough(self):
         
+        await self.gen.wb_inst([1,2,3],2,0)
         await self.gen.random_enq_inst(156)
         enq_num = random.randint(1,10)
-        await self.gen.gen_enq_inst_list(enq_num)
-        await self.wait_cycle(3)
+        #await self.gen.gen_enq_inst_list(enq_num)
+        #await self.gen.wait_cycle(3)
         #assert(156 == self.env.internal.bundle.enq_ptr.value.value)

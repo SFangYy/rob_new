@@ -6,26 +6,7 @@ class EnqAgent(Agent):
         super().__init__(bundle)
         self.bundle = bundle
         
-    # async def use_snpt(self):
-    #     self.bundle.snpt.useSnpt.value = 1
 
-
-    # async def wait_cycle(self,nums=1):
-    #     await self.bundle.step(nums)
-    #     return True
-    
-    # #@monitor_method()
-    # async def mon_port(self,a):
-    #     print("this is monitor port",a)
-    #     a = 1
-    #     #return True
-
-
-    # async def test_two_time(self,idx):
-    #     print("this is agent top print")
-    #     for _ in range(idx):
-    #         await self.test_time()
-    #     await self.bundle.step(1)
 
     # #@driver_method()
     # async def init_dut(self):
@@ -35,15 +16,69 @@ class EnqAgent(Agent):
     #     self.bundle.control.reset.value = 0
     #     await self.bundle.step(1)
         
-    # """
-    # _dispatchNum_T = io_enq_req_0_valid & io_enq_req_0_bits_firstUop
-    # wire [7:0]         allocatePtrVec_1_value = _GEN_4[{2'h0, _dispatchNum_T}];
-    # wire               canEnqueue_0 = _dispatchNum_T & io_enq_canAccept_0;
-    # wire               io_enq_canAccept_0 =
-    # allowEnqueue & ~hasBlockBackward & _rab_io_canEnq & _vtypeBuffer_io_canEnq;
-    # """
+ 
+    """ new enq port
+    input          io_enq_req_0_valid,
+    input  [31:0]  io_enq_req_0_bits_instr,
+    input  [40:0]  io_enq_req_0_bits_pc,
+    input          io_enq_req_0_bits_exceptionVec_0,
+    input          io_enq_req_0_bits_exceptionVec_1,
+    input          io_enq_req_0_bits_exceptionVec_2,
+    input          io_enq_req_0_bits_exceptionVec_12,
+    input          io_enq_req_0_bits_exceptionVec_20,
+    input          io_enq_req_0_bits_exceptionVec_22,
+    input          io_enq_req_0_bits_hasException,
+    input          io_enq_req_0_bits_trigger_frontendCanFire_0,
+    input          io_enq_req_0_bits_trigger_frontendCanFire_1,
+    input          io_enq_req_0_bits_trigger_frontendCanFire_2,
+    input          io_enq_req_0_bits_trigger_frontendCanFire_3,
+    input          io_enq_req_0_bits_preDecodeInfo_isRVC,
+    input          io_enq_req_0_bits_crossPageIPFFix,
+    input          io_enq_req_0_bits_ftqPtr_flag,
+    input  [5:0]   io_enq_req_0_bits_ftqPtr_value,
+    input  [3:0]   io_enq_req_0_bits_ftqOffset,
+    input  [5:0]   io_enq_req_0_bits_ldest,
+    input  [34:0]  io_enq_req_0_bits_fuType,
+    input  [8:0]   io_enq_req_0_bits_fuOpType,
+    input          io_enq_req_0_bits_rfWen,
+    input          io_enq_req_0_bits_fpWen,
+    input          io_enq_req_0_bits_vecWen,
+    input          io_enq_req_0_bits_v0Wen,
+    input          io_enq_req_0_bits_vlWen,
+    input          io_enq_req_0_bits_isXSTrap,
+    input          io_enq_req_0_bits_waitForward,
+    input          io_enq_req_0_bits_blockBackward,
+    input          io_enq_req_0_bits_flushPipe,
+    input          io_enq_req_0_bits_vpu_vill,
+    input          io_enq_req_0_bits_vpu_vma,
+    input          io_enq_req_0_bits_vpu_vta,
+    input  [1:0]   io_enq_req_0_bits_vpu_vsew,
+    input  [2:0]   io_enq_req_0_bits_vpu_vlmul,
+    input          io_enq_req_0_bits_vpu_specVill,
+    input          io_enq_req_0_bits_vpu_specVma,
+    input          io_enq_req_0_bits_vpu_specVta,
+    input  [1:0]   io_enq_req_0_bits_vpu_specVsew,
+    input  [2:0]   io_enq_req_0_bits_vpu_specVlmul,
+    input          io_enq_req_0_bits_vlsInstr,
+    input          io_enq_req_0_bits_wfflags,
+    input          io_enq_req_0_bits_isMove,
+    input          io_enq_req_0_bits_isVset,
+    input          io_enq_req_0_bits_firstUop,
+    input          io_enq_req_0_bits_lastUop,
+    input  [6:0]   io_enq_req_0_bits_numWB,
+    input  [2:0]   io_enq_req_0_bits_commitType,
+    input  [7:0]   io_enq_req_0_bits_pdest,
+    input          io_enq_req_0_bits_robIdx_flag,
+    input  [7:0]   io_enq_req_0_bits_robIdx_value,
+    input  [2:0]   io_enq_req_0_bits_instrSize,
+    input          io_enq_req_0_bits_dirtyFs,
+    input          io_enq_req_0_bits_dirtyVs,
+    input          io_enq_req_0_bits_eliminatedMove,
+    input          io_enq_req_0_bits_snapshot,
+    input          io_enq_req_0_bits_loadWaitBit,
+    input          io_enq_req_0_bits_singleStep,
 
-
+    """
     async def enqueue_instr(self,req_idx,instr):
         def select_req(i):
             func_map = {
@@ -64,10 +99,10 @@ class EnqAgent(Agent):
             exception = getattr(result,f"exceptionVec_{instr.exception}") 
             exception.value = 1
         result.valid.value = instr.valid
-        result.bits_instr.value = instr.instr
-        result.bits_pc.value = instr.pc
-        result.bits_trigger_frontendCanFire_0.value = instr.frontendCanFire
-        result.bits_trigger_frontendHit_0.value = instr.frontendHit
+        #result.bits_instr.value = instr.instr
+        #result.bits_pc.value = instr.pc
+        #result.bits_trigger_frontendCanFire_0.value = instr.frontendCanFire
+        #result.bits_trigger_frontendHit_0.value = instr.frontendHit
         result.bits_isMove.value = instr.isMove
         result.bits_ftqPtr_flag.value = instr.ftqPtr_flag
         result.bits_ftqPtr_value.value = instr.ftqPtr_value
@@ -105,13 +140,11 @@ class EnqAgent(Agent):
         result.bits_instrSize.value = instr.instrSize 
         result.bits_dirtyVs.value = instr.dirtyVs
         result.bits_dirtyFs.value = instr.dirtyFs
-        result.bits_eliminatedMove.value = instr.eliminatedMove
+        #result.bits_eliminatedMove.value = instr.eliminatedMove
         #result.bits_snapshot.value = 0
-        result.bits_debugInfo_eliminatedMove.value = instr.debugInfo_eliminatedMove
-        result.bits_debugInfo_renameTime.value = instr.debugInfo_renameTime
         result.bits_loadWaitBit.value = instr.loadWaitBit
-        result.bits_singleStep.value = instr.singleStep
-        result.bits_debug_fuType.value = instr.debug_fuType
+        #result.bits_singleStep.value = instr.singleStep
+        #result.bits_debug_fuType.value = instr.debug_fuType
         result.bits_numWB.value = instr.numWB
         result.bits_pdest.value = instr.pdest
         if(req_idx == 0 and instr.snapshot == 1):
@@ -123,8 +156,6 @@ class EnqAgent(Agent):
         if(instr.flushpipe == 1):
             result.bits_flushPipe.value = 1
             result.valid.value = 0
-        #print(">>>>",self.bundle.enq_ptr.ptrVec.value.value)
-    #     #return self.bundle.
 
     
     # @driver_method()
@@ -134,11 +165,8 @@ class EnqAgent(Agent):
             await self.enqueue_instr(idx_1,instr)
             idx_1 = idx_1+1
         
-        await self.bundle.step(1)
-        await self.reset_enq()
-        await self.bundle.step(1)
-        #print("dut is ",self.bundle.internal_bundle.enq_ptr.value.value)
         #await self.bundle.step(1)
+
 
     async def reset_enq(self):
         instr = Rob_Instr()
@@ -178,6 +206,4 @@ class EnqAgent(Agent):
     #     getattr(self.bundle.lsTopDownInfo,f"{channel}_s2_paddr_valid").value = 1
     #     getattr(self.bundle.lsTopDownInfo,f"{channel}_s2_paddr_bits").value = robIdx
     #     await self.bundle.step(1)     
-"""
-commit instr 0 -> 1 
-"""
+

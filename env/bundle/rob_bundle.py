@@ -48,12 +48,6 @@ class WriteBackSuffix(Bundle):
         "18_bits_robIdx_value"
     ]
 
-class WritebackBundle(Bundle):
-    def __init__(self,dut):
-        super().__init__()
-        for name in [*[f"io_writeback_{i}" for i in range(26)]]:
-            setattr(self,name,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
-            self.writeback = Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_")
 
 class CommitSuffix(Bundle):
     signals = [
@@ -87,16 +81,6 @@ class rabCommitBundle(Bundle):
         self.walkValid = Bundle.new_class_from_xport(dut.io_rabCommits_walkValid).from_prefix("io_rabCommits_walkValid_")
         self.Commits_info = Bundle.new_class_from_xport(dut.io_rabCommits_info).from_prefix("io_rabCommits_info_")
         
-class diffCommitSuffix(Bundle):
-    signals = [
-        "isCommit",
-    ]
-class diffCommitBundle(Bundle):
-    def __init__(self,dut):
-        super().__init__()
-        self.tag = diffCommitSuffix.from_prefix("io_diffCommits_")
-        self.commitvalid = Bundle.new_class_from_xport(dut.io_diffCommits_commitValid).from_prefix("io_diffCommits_commitValid_")
-        self.diffCommits_info = Bundle.new_class_from_xport(dut.io_diffCommits_info).from_prefix("io_diffCommits_info_")
 
 class SingleTagSuffix(Bundle):
     signals = [
@@ -183,7 +167,8 @@ bundle.req_0.frontendHit.value = 0
 class RobBundle(Bundle):
     def __init__(self, dut):
         super().__init__()
-        self.dut = dut 
+        self.dut = dut
+        self.wb_channel = list(range(1, 8, 2)) + list(range(14, 25))
         
         # connect Bundle
         self.control = controlBundle()
@@ -192,13 +177,13 @@ class RobBundle(Bundle):
         self.enq = EnqBundle(dut)
 
         # writeback & writebackNums
-        wb_list = list(range(1, 8, 2)) + list(range(14, 25))
-        for index,name in enumerate([*[f"io_writeback_{i}" for i in wb_list]]):
-            setattr(self,f"channel_{index}",Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
-
-        # for name in [*[f"io_writebackNums_{i}" for i in range(26)]]:
-        #    setattr(self,name,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
-        self.enq_ptr = Bundle.new_class_from_xport(dut.Rob_enqPtrGenModule_enqPtrVec_0).from_prefix("Rob_enqPtrGenModule_enqPtrVec_0_")
+        # writeback port:1,3,5,7,14-25
+        # writeback port : 0-25
+        for name in [*[f"io_writeback_{i}" for i in self.wb_channel]]:
+            setattr(self,name,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
+        for name in [*[f"io_writebackNums_{i}" for i in range(26)]]:
+           setattr(self,name,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
+        #self.enq_ptr = Bundle.new_class_from_xport(dut.Rob_enqPtrGenModule_enqPtrVec_0).from_prefix("Rob_enqPtrGenModule_enqPtrVec_0_")
         #self.line = Bundle.new_class_from_xport(dut.bosc_Rob).from_prefix("bosc_Rob_")
         # self.exception = ExceptionBundle(dut)
         # self.commit = CommitBundle(dut)

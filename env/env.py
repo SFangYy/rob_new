@@ -1,6 +1,7 @@
 import toffee
 from ..dut.Rob import DUTRob
 from .agent.enq_agent import EnqAgent
+from .agent.wb_agent import WritebackAgent
 from .bundle.rob_bundle import RobBundle
 #from toffee import value
 
@@ -10,5 +11,6 @@ class RobEnv(toffee.Env):
         self.dut = dut
         self.bundle = RobBundle(self.dut).bind(dut)
         self.enq_agent = EnqAgent(self.bundle)
+        self.wb_agent = WritebackAgent(self.bundle)
         #self.dut = a
         
