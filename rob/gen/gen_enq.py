@@ -23,7 +23,7 @@ class GenEnq():
         for i in range(invalid_size):
             inst = self.gen.gen_inst("",random.choice(invalid_type))
             inst_list.append(inst)
-            await self.gen.enq_inst_list(inst_list)
+            await self.gen.enq_inst(inst_list)
             await self.gen.wait_cycle(1)
             #assert(i+j+invalid_num == self.env.internal.bundle.enq_ptr.value.value)
 

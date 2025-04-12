@@ -150,7 +150,7 @@ class GenBase():
     # 根据指令流入对指令
     async def enq_inst(self, inst_list):
         
-        send_list
+        send_list = []
         if type (inst_list) == type(""):
             inst = Rob_Instr()
             inst.enq_inst()
