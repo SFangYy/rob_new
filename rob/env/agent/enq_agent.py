@@ -82,12 +82,12 @@ class EnqAgent(Agent):
     async def enqueue_instr(self,req_idx,instr):
         def select_req(i):
             func_map = {
-                0:self.bundle.enq.req_0,
-                1:self.bundle.enq.req_1,
-                2:self.bundle.enq.req_2,
-                3:self.bundle.enq.req_3,
-                4:self.bundle.enq.req_4,
-                5:self.bundle.enq.req_5,
+                0:self.bundle.enq.req[0],
+                1:self.bundle.enq.req[1],
+                2:self.bundle.enq.req[2],
+                3:self.bundle.enq.req[3],
+                4:self.bundle.enq.req[4],
+                5:self.bundle.enq.req[5],
             }
             if i in func_map:
                 return func_map[i]

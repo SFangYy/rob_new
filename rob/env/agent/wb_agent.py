@@ -4,7 +4,7 @@ from queue import Queue
 from toffee import *
 class WritebackAgent(Agent):
     def __init__(self,bundle):
-        super().__init__(bundle.step)
+        super().__init__(bundle)
         self.bundle = bundle
         self.line = 0
 

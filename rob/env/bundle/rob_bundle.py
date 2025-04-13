@@ -1,35 +1,32 @@
-from toffee import Bundle, Signal, Signals
+from toffee import *
 
 class EnqTagSuffix(Bundle):
     tage_enable, sc_enable = Signals(2)
-    
 
 class controlBundle(Bundle):
-    signals = ["reset","clock","canAccept","isEmpty",]
-# io_enq_req_i(0-5)_
+    reset, clock, canAccept, isEmpty = Signals(4)
+
+class EnqReqBundle(Bundle):
+        bits_blockBackward, bits_commitType, bits_crossPageIPFFix, bits_dirtyFs, bits_dirtyVs, bits_eliminatedMove, \
+        bits_exceptionVec_0, bits_exceptionVec_1, bits_exceptionVec_12, bits_exceptionVec_2, bits_exceptionVec_20, \
+        bits_exceptionVec_22, bits_firstUop, bits_flushPipe, bits_fpWen, bits_ftqOffset, bits_ftqPtr_flag, \
+        bits_ftqPtr_value, bits_fuOpType, bits_fuType, bits_hasException, bits_instr, bits_instrSize, bits_isMove, \
+        bits_isVset, bits_isXSTrap, bits_lastUop, bits_ldest, bits_loadWaitBit, bits_numWB, bits_pc, bits_pdest, \
+        bits_preDecodeInfo_isRVC, bits_rfWen, bits_robIdx_flag, bits_robIdx_value, bits_singleStep, bits_snapshot, \
+        bits_trigger_frontendCanFire_0, bits_trigger_frontendCanFire_1, bits_trigger_frontendCanFire_2, \
+        bits_trigger_frontendCanFire_3, bits_trigger_frontendHit_0, bits_trigger_frontendHit_1, \
+        bits_trigger_frontendHit_2, bits_trigger_frontendHit_3, bits_v0Wen, bits_vecWen, bits_vlWen, bits_vlsInstr, \
+        bits_vpu_specVill, bits_vpu_specVlmul, bits_vpu_specVma, bits_vpu_specVsew, bits_vpu_specVta, bits_vpu_vill, \
+        bits_vpu_vlmul, bits_vpu_vma, bits_vpu_vsew, bits_vpu_vta, bits_waitForward, bits_wfflags, valid = Signals(63)
+
 class EnqBundle(Bundle):
     def __init__(self,dut):
         super().__init__()
         self.tag = EnqTagSuffix.from_prefix("io_enq_")
-        self.req_0 = Bundle.new_class_from_xport(dut.io_enq_req_0).from_prefix("io_enq_req_0_")
-        self.req_1 = Bundle.new_class_from_xport(dut.io_enq_req_1).from_prefix("io_enq_req_1_")
-        self.req_2 = Bundle.new_class_from_xport(dut.io_enq_req_2).from_prefix("io_enq_req_2_")
-        self.req_3 = Bundle.new_class_from_xport(dut.io_enq_req_3).from_prefix("io_enq_req_3_")
-        self.req_4 = Bundle.new_class_from_xport(dut.io_enq_req_4).from_prefix("io_enq_req_4_")
-        self.req_5 = Bundle.new_class_from_xport(dut.io_enq_req_5).from_prefix("io_enq_req_5_")
+        self.req = BundleList(EnqReqBundle, "io_enq_req_#_", 6)
 
 class ExceptionTagSuffix(Bundle):
-    signals = [
-        "valid",
-        "bits_commitType",
-        "bits_instr",
-        "bits_singleStep",
-        "bits_vls",
-        "bits_isInterrupt",
-        "bits_singleStep",
-        "bits_crossPageIPFFix",
-    ]
-
+    valid, bits_commitType, bits_instr, bits_singleStep, bits_vls, bits_isInterrupt, bits_singleStep, bits_crossPageIPFFix = Signals(8)
 
 class ExceptionBundle(Bundle):
     def __init__(self,dut):
@@ -50,10 +47,8 @@ class WriteBackSuffix(Bundle):
 
 
 class CommitSuffix(Bundle):
-    signals = [
-        "isCommit",
-        "isWalk",
-    ]
+    isCommit, isWalk = Signals(2)
+
 class CommitBundle(Bundle):
     def __init__(self,dut):
         super().__init__()
@@ -63,11 +58,9 @@ class CommitBundle(Bundle):
         self.io_Commits_info = Bundle.new_class_from_xport(dut.io_commits_info).from_prefix("io_commits_info_")
         self.io_Commits_robIdx = Bundle.new_class_from_xport(dut.io_commits_robIdx).from_prefix("io_commits_robIdx_")
 
-class RabCommitSuffix(Bundle):
-    signals = [
-        "isCommit",
-        "isWalk",
-    ]
+class RabCommitSuffix(CommitSuffix):
+    ...
+
 class EnqPtrGen(Bundle):
     def __init__(self,dut):
         super().__init__()
@@ -80,23 +73,13 @@ class rabCommitBundle(Bundle):
         self.commitvalid = Bundle.new_class_from_xport(dut.io_rabCommits_commitValid).from_prefix("io_rabCommits_commitValid_")
         self.walkValid = Bundle.new_class_from_xport(dut.io_rabCommits_walkValid).from_prefix("io_rabCommits_walkValid_")
         self.Commits_info = Bundle.new_class_from_xport(dut.io_rabCommits_info).from_prefix("io_rabCommits_info_")
-        
 
 class SingleTagSuffix(Bundle):
-    signals = [
-        "robFull",
-        "headNotReady",
-        "wfi_enable",
-        "debugHeadLsIssue",
-        "debugRobHead_debug_fuType",
-        "readGPAMemData",
-        "hartId"
-    ]
+    robFull, headNotReady, wfi_enable, debugHeadLsIssue, debugRobHead_debug_fuType, readGPAMemData, hartId = Signals(7)
 
 class debugEnqLsqSuffix(Bundle):
-    signals = [
-        "canAccept"   
-    ]
+    canAccept = Signals(1)
+
 class debugEnqLsqBundle(Bundle):
     def __init__(self,dut):
         super().__init__()
@@ -107,42 +90,37 @@ class Entry(Bundle):
     def __init__(self,dut):
         super().__init__()
         for name in [*[f"bosc_Rob_robEntries_{i}" for i in range(160)]]:
-                    origin_name = name
-                    bundle_name = origin_name.split("_")
-                    bundle_name_str = "index" + bundle_name[3]
-        
-                    setattr(self,bundle_name_str,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
+            origin_name = name
+            bundle_name = origin_name.split("_")
+            bundle_name_str = "index" + bundle_name[3]
+
+            setattr(self,bundle_name_str,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
 
 class DeqGroup(Bundle):
     def __init__(self,dut):
         super().__init__()
         for name in [*[f"bosc_Rob_robDeqGroup_{i}" for i in range(8)]]:
-                    origin_name = name
-                    bundle_name = origin_name.split("_")
-                    bundle_name_str = "index" + bundle_name[3]
-                    setattr(self,bundle_name_str,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
+            origin_name = name
+            bundle_name = origin_name.split("_")
+            bundle_name_str = "index" + bundle_name[3]
+            setattr(self,bundle_name_str,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
 
 class HasCommit(Bundle):
     def __init__(self,dut):
         super().__init__()
         for name in [*[f"bosc_Rob_hasCommitted_{i}" for i in range(8)]]:
-                    origin_name = name
-                    bundle_name = origin_name.split("_")
-                    bundle_name_str = "index" + bundle_name[3]
-                    setattr(self,bundle_name_str,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
+            origin_name = name
+            bundle_name = origin_name.split("_")
+            bundle_name_str = "index" + bundle_name[3]
+            setattr(self,bundle_name_str,Bundle.new_class_from_xport(getattr(dut,name)).from_prefix(name+"_"))
 class LineBundle(Bundle):
-    signals = [
-        "robIdxThisLine_0",
-        "allCommited",
-        "robBanksRaddrThisLine",
-        "lastWalkPtr_value",
-        "walkSizeSum",
-        *[f"hasCommitted_{i}" for i in range(8)]
-    ]
+    robIdxThisLine, allCommited, robBanksRaddrThisLine, lastWalkPtr_value, walkSizeSum = Signals(5)
+    hasCommitted_0, hasCommitted_1, hasCommitted_2, hasCommitted_3, hasCommitted_4, hasCommitted_5, hasCommitted_6, hasCommitted_7 = Signals(8)
+
 class Internal_Bundle(Bundle):
     def __init__(self, dut):
         super().__init__()
-        self.dut = dut 
+        self.dut = dut
 
         #self.enq_ptr = EnqPtrGen(dut)
         #self.enq_ptr = Bundle.from_prefix("bosc_Rob_enqPtrGenModule_enqPtrVec_0_")
@@ -153,7 +131,7 @@ class Internal_Bundle(Bundle):
         self.deqgroup = DeqGroup(dut)
         #self.hascommit = HasCommit(dut)
         self.thisline = LineBundle.from_prefix("bosc_Rob_")
-        
+
 
 
 """
@@ -169,7 +147,7 @@ class RobBundle(Bundle):
         super().__init__()
         self.dut = dut
         self.wb_channel = list(range(1, 8, 2)) + list(range(14, 25))
-        
+
         # connect Bundle
         self.control = controlBundle()
         self.redirect = Bundle.new_class_from_xport(dut.io_redirect).from_prefix("io_redirect_")
@@ -193,8 +171,8 @@ class RobBundle(Bundle):
         # self.writebackNums = Bundle.new_class_from_xport(dut.io_writebackNums_15).from_prefix("io_writebackNums_15_")
 
         # self.robDeqPtr = Bundle.new_class_from_xport(dut.io_robDeqPtr).from_prefix("io_robDeqPtr_")
-        
-        
+
+
         # self.fromDecode = Bundle.new_class_from_xport(dut.io_fromDecode).from_prefix("io_fromDecode_")
         # self.singleSignals = SingleTagSuffix.from_prefix("io_")
         # self.difftest = Bundle.new_class_from_xport(dut.io_readGPAMemAddr).from_prefix("io_readGPAMemAddr_")
@@ -203,6 +181,6 @@ class RobBundle(Bundle):
         # self.lsTopDownInfo = Bundle.new_class_from_xport(dut.io_lsTopdownInfo).from_prefix("io_lsTopdownInfo_")
         # self.io_debugTopDown = Bundle.new_class_from_xport(dut.io_debugTopDown).from_prefix("io_debugTopDown_")
         # self.io_perf = Bundle.new_class_from_xport(dut.io_perf).from_prefix("io_perf_")
-        
+
         # sub model
         #self.internal_bundle = Internal_Bundle(dut)
