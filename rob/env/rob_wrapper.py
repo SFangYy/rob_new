@@ -1,36 +1,65 @@
 import random
 from dataclasses import dataclass
 class Rob_Instr:
-    valid:int = 0
-    instr:int = 0
-    pc:int = 0
-    exceptionVec:int = 0
-    frontendCanFire:int = 0
-    isRVC:int = 0
-    ftqPtr_flag:int = 0
-    firstUop:int = 0
-    lastUop:int = 0
-    isVset:int = 0
-    flushpipe:int = 0
-    numWB:int = 0
-    eliminatedMove:int = 0
-    snapshot:int = 0
-    flushpipe:int = 0
     def __init__(self):
-        for name in ['valid', 'instr', 'pc','exceptionVec', 'frontendCanFire', 'frontendHit', 'isRVC', 'ftqPtr_flag', 'ftqPtr_value', 'ftqOffset','ldest', 
-                     'fuType', 'fuOpType', 'waitForward', 'blockBackward', 'firstUop', 'lastUop', 'robIdx_flag', 'robIdx_value', 'fpWen', 'rfWen', 'vecWen',
-                     'v0Wen', 'v0Wen', 'vlWen', 'isXSTrap', 'flushPipe', 'vpu_vill', 'vpu_vma','vpu_vta','vpu_vsew','vpu_vlmul','vlsInstr','wfflags','isMove',
-                     'isVset', 'numWB', 'commitType', 'pdest','instrSize', 'dirtyFs', 'dirtyVs', 'eliminatedMove', 'snapshot', 'debugInfo_eliminatedMove',
-                     'debugInfo_renameTime','flushpipef','snapshot','loadWaitBit','singleStep','debug_fuType']:
-            setattr(self, name, 0)
-            self.exception = 0
+        self.valid = 0
+        self.instr = 0
+        self.pc = 0
+        self.exceptionVec = 0
+        self.frontendCanFire = 0
+        self.frontendHit = 0
+        self.isRVC = 0
+        self.ftqPtr_flag = 0
+        self.ftqPtr_value = 0
+        self.ftqOffset = 0
+        self.ldest = 0
+        self.fuType = 0
+        self.fuOpType = 0
+        self.waitForward = 0
+        self.blockBackward = 0
+        self.firstUop = 0
+        self.lastUop = 0
+        self.robIdx_flag = 0
+        self.robIdx_value = 0
+        self.fpWen = 0
+        self.rfWen = 0
+        self.vecWen = 0
+        self.v0Wen = 0
+        self.vlWen = 0
+        self.isXSTrap = 0
+        self.flushPipe = 0
+        self.vpu_vill = 0
+        self.vpu_vma = 0
+        self.vpu_vta = 0
+        self.vpu_vsew = 0
+        self.vpu_vlmul = 0
+        self.vlsInstr = 0
+        self.wfflags = 0
+        self.isMove = 0
+        self.isVset = 0
+        self.numWB = 0
+        self.commitType = 0
+        self.pdest = 0
+        self.instrSize = 0
+        self.dirtyFs = 0
+        self.dirtyVs = 0
+        self.eliminatedMove = 0
+        self.snapshot = 0
+        self.debugInfo_eliminatedMove = 0
+        self.debugInfo_renameTime = 0
+        self.flushpipe = 0
+        self.loadWaitBit = 0
+        self.singleStep = 0
+        self.debug_fuType = 0
+        self.exception = 0
+
         self.inst_list = ["jmp", "brh", "i2f","i2v", "f2v", "ldu", "alu", "mul" ,"div", "fence", "bku",
-                        "jmp", "fmac", "fcvt", "fDivSqrt", "ldu", "stu", "mou", "vipu", "vialuF", "vppu", 
-                        "vimac", "vidiv", "vfpu","vfpu","vfma","vfidv","vfcvt","vsetiwi", "vsetiwf", "vldu", 
+                        "jmp", "fmac", "fcvt", "fDivSqrt", "ldu", "stu", "mou", "vipu", "vialuF", "vppu",
+                        "vimac", "vidiv", "vfpu","vfpu","vfma","vfidv","vfcvt","vsetiwi", "vsetiwf", "vldu",
                         "vstu", "vsegldu", "vsegstu" ]
+
         selected_attr = random.choice(["rfWen","fpWen","vecWen"])
         setattr(self, selected_attr, random.randint(0, 1))
-        #self.randmoize()
 
     def randmoize(self):
         self.valid = random.randint(0,1)
@@ -44,7 +73,7 @@ class Rob_Instr:
         self.ftqOffset = random.randint(0,2**3-1)
         self.ldest = random.randint(1,2**5-1)
         self.fuType = 0
-        self.fuOpType = 0     
+        self.fuOpType = 0
         self.waitForward = random.randint(0,1)
         self.blockBackward = random.randint(0,1)
         self.firstUop = random.randint(0,1)
@@ -55,14 +84,14 @@ class Rob_Instr:
         self.numWB = random.randint(1,2**4-1)
         self.pdest = random.randint(1,2**8-1)
         self.instrSize = random.randint(0,2**3-1)
-        
+
     def gen_exception(self,indexf):
         self.exceptionVec_0 = 1
 
     def gen_inst_type(self,inst_type):
         if inst_type in self.inst_list:
             idx = self.inst_list.index(inst_type)
-            self.fuType = idx 
+            self.fuType = idx
             self.fuOpType = 2 ** idx
         if inst_type == "csr":
             self.blockBackward = 1
@@ -93,7 +122,6 @@ class Rob_Instr:
 
         self.gen_inst_type(inst_type)
 
-        
 
 class Debug_Info:
     def __init__(self):
@@ -116,10 +144,27 @@ class Rob_Entry(Rob_Instr):
 
 class Rob_Writeback:
     def __init__(self):
-        for name in ['valid', 'data', 'flushPipe','robIdx_flag', 'robIdx_value', *[f"exceptionVec_{i}" for i in range(24)],'flushPipe',
-                     'replay', *[f"debug_{debug_name}" for debug_name in ['isMMIO', 'isPerfCnt','paddr']],*[f"debugInfo_{info_name}"
-                      for info_name in ['enqRsTime', 'selectTime', 'issueTime', 'writebackTime']], 'nums']:
-            setattr(self,name,0)
+        self.valid = 0
+        self.data = 0
+        self.flushPipe = 0
+        self.robIdx_flag = 0
+        self.robIdx_value = 0
+        self.exceptionVec_0 = self.exceptionVec_1 = self.exceptionVec_2 = self.exceptionVec_3 = \
+        self.exceptionVec_4 = self.exceptionVec_5 = self.exceptionVec_6 = self.exceptionVec_7 = \
+        self.exceptionVec_8 = self.exceptionVec_9 = self.exceptionVec_10 = self.exceptionVec_11 = \
+        self.exceptionVec_12 = self.exceptionVec_13 = self.exceptionVec_14 = self.exceptionVec_15 = \
+        self.exceptionVec_16 = self.exceptionVec_17 = self.exceptionVec_18 = self.exceptionVec_19 = \
+        self.exceptionVec_20 = self.exceptionVec_21 = self.exceptionVec_22 = self.exceptionVec_23 = 0
+        self.replay = 0
+        self.debug_isMMIO = 0
+        self.debug_isPerfCnt = 0
+        self.debug_paddr = 0
+        self.debugInfo_enqRsTime = 0
+        self.debugInfo_selectTime = 0
+        self.debugInfo_issueTime = 0
+        self.debugInfo_writebackTime = 0
+        self.nums = 0
+
         self.exception = -1
         self.channel = 0
 
@@ -216,7 +261,7 @@ class Rob_Writeback:
             return 24
         elif fuOpType == 34:
             return 24
-            
+
     def gen_exception(self,exceptionTag):
         print("generate exception")
 
@@ -228,7 +273,7 @@ class Rob_Writeback:
         self.nums = nums
         self.exception = -1
         self.channel = self.gen_channel(fuOpType)
-        
+
         self.flushpipe = flushpipe
         if hasexception == 1 and (19 <= self.channel and self.channel <= 25):
             number = []
@@ -240,7 +285,7 @@ class Rob_Writeback:
         elif hasexception == 1 and self.channel == 5:
             number = [2,3,8,9,10,11,22]
             self.exception = random.choice(number)
-       
+
     def set_attr(self,robIdx_value,nums,channel,exception):
         self.valid = 1
         self.robIdx_value = robIdx_value
@@ -248,14 +293,10 @@ class Rob_Writeback:
         self.nums = nums
         self.channel = channel
         self.exception = exception
-        
+
     def writeback_reset(self):
         self.__init__()
-    
+
     def writeback_instr_withexception(self):
         self.writeback_instr()
-        #self.exceptionVec_0 = 
-
-
-
 
