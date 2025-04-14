@@ -19,11 +19,22 @@ class EnqReqBundle(Bundle):
         bits_vpu_specVill, bits_vpu_specVlmul, bits_vpu_specVma, bits_vpu_specVsew, bits_vpu_specVta, bits_vpu_vill, \
         bits_vpu_vlmul, bits_vpu_vma, bits_vpu_vsew, bits_vpu_vta, bits_waitForward, bits_wfflags, valid = Signals(63)
 
-class EnqBundle(Bundle):
+class EnqBundle_new(Bundle):
     def __init__(self,dut):
         super().__init__()
         self.tag = EnqTagSuffix.from_prefix("io_enq_")
         self.req = BundleList(EnqReqBundle, "io_enq_req_#_", 6)
+
+class EnqBundle(Bundle):
+    def __init__(self,dut):
+        super().__init__()
+        self.tag = EnqTagSuffix.from_prefix("io_enq_")
+        self.req0 = Bundle.new_class_from_xport(dut.io_enq_req_0).from_prefix("io_enq_req_0_")
+        self.req1 = Bundle.new_class_from_xport(dut.io_enq_req_1).from_prefix("io_enq_req_1_")
+        self.req2 = Bundle.new_class_from_xport(dut.io_enq_req_2).from_prefix("io_enq_req_2_")
+        self.req3 = Bundle.new_class_from_xport(dut.io_enq_req_3).from_prefix("io_enq_req_3_")
+        self.req4 = Bundle.new_class_from_xport(dut.io_enq_req_4).from_prefix("io_enq_req_4_")
+        self.req5 = Bundle.new_class_from_xport(dut.io_enq_req_5).from_prefix("io_enq_req_5_")
 
 class ExceptionTagSuffix(Bundle):
     valid, bits_commitType, bits_instr, bits_singleStep, bits_vls, bits_isInterrupt, bits_singleStep, bits_crossPageIPFFix = Signals(8)
