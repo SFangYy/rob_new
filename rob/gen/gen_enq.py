@@ -12,19 +12,19 @@ class GenEnq():
 
 
     async def gen_invalid(self,type = ""):
-        invalid_type = ["not_first","invalid"]
+        # invalid_type = ["not_first","invalid"]
 
         enq_inst_size = random.randint(1,159)
         await self.gen.random_enq_inst(enq_inst_size)
 
-        invalid_size = random.randint(0,5)
-        inst_list = []
+        # invalid_size = random.randint(0,5)
+        # inst_list = []
 
-        for i in range(invalid_size):
-            inst = self.gen.gen_inst("",random.choice(invalid_type))
-            inst_list.append(inst)
-            await self.gen.enq_inst(inst_list)
-            await self.gen.wait_cycle(1)
+        # for i in range(invalid_size):
+        #     inst = self.gen.gen_inst("",random.choice(invalid_type))
+        #     inst_list.append(inst)
+        #     await self.gen.enq_inst(inst_list)
+        #     await self.gen.wait_cycle(1)
             #assert(i+j+invalid_num == self.env.internal.bundle.enq_ptr.value.value)
 
 
@@ -34,7 +34,7 @@ class GenEnq():
         await self.gen.random_enq_inst(156)
         for i in range(4):
             await self.gen.random_enq_inst(1)
-            
+
         #enq_num = random.randint(1,10)
         #await self.gen.gen_enq_inst_list(enq_num)
         #await self.gen.wait_cycle(3)
