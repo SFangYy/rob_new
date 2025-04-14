@@ -37,7 +37,7 @@ class WritebackAgent(Agent):
     #     self.bundle.redirect.bits_robIdx_value.value = robIdx_value
     #     self.bundle.redirect.bits_level.value = level
 
-    @driver_method()
+    #@driver_method()
     async def writeback(self,channel,writeback_instr):
 
         if channel != None:
@@ -59,7 +59,7 @@ class WritebackAgent(Agent):
             if(channel<=25 and channel >=21):
                 result.bits_flushPipe.value = writeback_instr.flushPipe
 
-    #@driver_method()
+    @driver_method()
     async def writeback_list(self,writeback_list):
         for wb_info in writeback_list:
             await self.writeback(wb_info.channel,wb_info)
