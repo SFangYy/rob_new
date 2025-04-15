@@ -65,8 +65,9 @@ class GenBase():
     async def wait_cycle(self,cycle=0):
         await self.env.enq_agent.bundle.step(cycle)
 
-    def init_dut(self):
-        self.env.enq_agent.init_dut()
+    async def init_dut(self):
+        await self.env.enq_agent.init_dut()
+
     def gen_fu(self,size,exception = -1):
         inst_list = []
         for i in range(size):
@@ -141,6 +142,7 @@ class GenBase():
         sub_lists = [send_list[i:i+6] for i in range(0, len(send_list), 6)]
         for sub_list in sub_lists:
             await self.env.enq_agent.enq_list(sub_list)
+            await self.wait_cycle(1)
 
         #self.inst_list = []
 
@@ -208,6 +210,7 @@ class GenBase():
                     self.add_deqptr()
 
         await self.env.wb_agent.writeback_list(writeback_list)
+        await self.wait_cycle(1)
         #await self.env.enq_agent.bundle.step(1)
 
         writeback_list = []

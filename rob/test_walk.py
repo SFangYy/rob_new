@@ -5,7 +5,7 @@ from env import *
 # case 17
 @toffee_test.testcase
 async def test_flush_self(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_isflush_self(1)
@@ -13,7 +13,7 @@ async def test_flush_self(rob_base_gen):
 # case 18
 @toffee_test.testcase
 async def test_not_flush_self(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_isflush_self(0)
@@ -21,7 +21,7 @@ async def test_not_flush_self(rob_base_gen):
 # case 19
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(0,0,0)
@@ -29,7 +29,7 @@ async def test_deq_enq(rob_base_gen):
 # case 20
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(0,1,0)
@@ -37,7 +37,7 @@ async def test_deq_enq(rob_base_gen):
 # case 21
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(0,2,0)
@@ -45,7 +45,7 @@ async def test_deq_enq(rob_base_gen):
 # case 22
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(0,0,1)
@@ -53,7 +53,7 @@ async def test_deq_enq(rob_base_gen):
 # case 23
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(0,1,1)
@@ -61,7 +61,7 @@ async def test_deq_enq(rob_base_gen):
 # case 24
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(0,2,2)
@@ -69,7 +69,7 @@ async def test_deq_enq(rob_base_gen):
 # case 25
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(1,0,0)
@@ -77,7 +77,7 @@ async def test_deq_enq(rob_base_gen):
 # case 26
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(1,1,0)
@@ -85,7 +85,7 @@ async def test_deq_enq(rob_base_gen):
 # case 27
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(1,2,0)
@@ -93,7 +93,7 @@ async def test_deq_enq(rob_base_gen):
 # case 28
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(1,0,1)
@@ -101,7 +101,7 @@ async def test_deq_enq(rob_base_gen):
 # case 29
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(1,1,1)
@@ -109,7 +109,7 @@ async def test_deq_enq(rob_base_gen):
 # case 30
 @toffee_test.testcase
 async def test_deq_enq(rob_base_gen):
-    rob_base_gen.init_dut()
+    await rob_base_gen.init_dut()
     gen = GenWalk(rob_base_gen)
     for i in range(200):
         await gen.gen_redirect(1,2,2)
